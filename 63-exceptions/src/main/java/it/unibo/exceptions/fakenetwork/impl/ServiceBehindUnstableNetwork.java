@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
 import java.util.random.RandomGenerator;
 
 import static it.unibo.exceptions.arithmetic.ArithmeticService.KEYWORDS;
@@ -31,6 +32,11 @@ public final class ServiceBehindUnstableNetwork implements NetworkComponent {
          */
         this.failProbability = failProbability;
         randomGenerator = new Random(randomSeed);
+        if(failProbability >= 0 && failProbability < 1){
+            final String msg = "Accesso fuori dai limiti";
+            throw new java.lang.IllegalArgumentException(msg);
+        }
+
     }
 
     /**
