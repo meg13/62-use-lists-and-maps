@@ -32,7 +32,7 @@ public final class ServiceBehindUnstableNetwork implements NetworkComponent {
          */
         this.failProbability = failProbability;
         randomGenerator = new Random(randomSeed);
-        if(failProbability >= 0 && failProbability < 1){
+        if(failProbability < 0 || failProbability >= 1){
             final String msg = "Accesso fuori dai limiti";
             throw new java.lang.IllegalArgumentException(msg);
         }
@@ -61,8 +61,8 @@ public final class ServiceBehindUnstableNetwork implements NetworkComponent {
             commandQueue.add(data);
         } else {
             final var message = data + " is not a valid keyword (allowed: " + KEYWORDS + "), nor is a number";
-            System.out.println(message);
             commandQueue.clear();
+            throw new IllegalStateException(message, exceptionWhenParsedAsNumber);
             /*
              * This method, in this point, should throw an IllegalStateException.
              * Its cause, however, is the previous NumberFormatException.
@@ -85,7 +85,11 @@ public final class ServiceBehindUnstableNetwork implements NetworkComponent {
 
     private void accessTheNework(final String message) throws IOException {
         if (randomGenerator.nextDouble() < failProbability) {
-            throw new IOException("Generic I/O error");
+            if (message == null) {
+                throw new NetworkException();
+            }else {
+                throw new NetworkException(message);
+            }
         }
     }
 

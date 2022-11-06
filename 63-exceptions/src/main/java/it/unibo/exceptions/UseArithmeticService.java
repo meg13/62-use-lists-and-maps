@@ -49,8 +49,8 @@ public final class UseArithmeticService {
          */
         try {
             server.sendData(message);
-        } catch (Exception e ) {
-            System.out.print(e.toString());
+        } catch (final IOException e ) {
+            LOG.println("Exception" + e.getMessage());
         }
     }
 
@@ -59,7 +59,15 @@ public final class UseArithmeticService {
          * This method should re-try to retrieve information from the provided server, catching all IOExceptions,
          * until it succeeds.
          */
-        return null;
+        String response = null;
+        try{
+            response = server.receiveResponse();
+        } catch (final IOException e) {
+            LOG.println("Exception" + e.getMessage());
+            retryReceiveOnNetworkError(server);
+        }
+        return response;
+        
     }
 
     private static void assertEqualsAsDouble(final String expected, final String actual) {
